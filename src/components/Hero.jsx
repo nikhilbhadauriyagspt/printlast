@@ -39,7 +39,7 @@ const Hero = () => {
 
   return (
     <div className="relative bg-white min-h-[90vh] flex items-center pt-20 overflow-hidden">
-      
+
       {/* Right Side Subtle Decor */}
       <div className="absolute top-0 right-0 w-1/3 h-full bg-slate-50/50 z-0 hidden lg:block"></div>
 
@@ -62,21 +62,19 @@ const Hero = () => {
             onClick={() => setCurrentSlide(idx)}
             className="group flex items-center justify-end gap-4"
           >
-            <span className={`text-[10px] font-black tracking-widest transition-all ${
-              currentSlide === idx ? 'text-brand-600 opacity-100' : 'text-slate-300 opacity-0 group-hover:opacity-100'
-            }`}>
+            <span className={`text-[10px] font-black tracking-widest transition-all ${currentSlide === idx ? 'text-brand-600 opacity-100' : 'text-slate-300 opacity-0 group-hover:opacity-100'
+              }`}>
               {idx === 0 ? 'INTRO' : idx === 1 ? 'SMART' : 'STUDIO'}
             </span>
-            <div className={`h-1.5 rounded-full transition-all duration-500 ${
-              currentSlide === idx ? 'w-10 bg-brand-600' : 'w-2 bg-slate-200 group-hover:bg-slate-300'
-            }`} />
+            <div className={`h-1.5 rounded-full transition-all duration-500 ${currentSlide === idx ? 'w-10 bg-brand-600' : 'w-2 bg-slate-200 group-hover:bg-slate-300'
+              }`} />
           </button>
         ))}
       </div>
 
       <div className="container mx-auto px-6 lg:px-20 relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-20">
-          
+
           {/* CONTENT SECTION */}
           <div className="w-full lg:w-[55%] text-center lg:text-left">
             <div className="max-w-2xl mx-auto lg:mx-0">
@@ -94,14 +92,14 @@ const Hero = () => {
               </p>
 
               <div className="flex flex-wrap items-center gap-6 justify-center lg:justify-start animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                <Link 
-                  to="/products" 
+                <Link
+                  to="/products"
                   className="px-10 py-5 bg-slate-950 text-white rounded-full font-bold text-xs uppercase tracking-widest hover:bg-brand-600 transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3"
                 >
                   Explore Collection <MoveRight size={16} />
                 </Link>
 
-                <Link 
+                <Link
                   to="/contact"
                   className="px-10 py-5 bg-white border border-slate-200 text-slate-900 rounded-full font-bold text-xs uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-3"
                 >
@@ -111,10 +109,10 @@ const Hero = () => {
 
               {/* Minimal Trust Bar */}
               <div className="mt-20 grid grid-cols-2 sm:grid-cols-4 gap-8 pt-10 border-t border-slate-100">
-                <TrustPoint icon={<ShieldCheck size={18}/>} text="2 YEAR WARRANTY" />
-                <TrustPoint icon={<Zap size={18}/>} text="FAST DELIVERY" />
-                <TrustPoint icon={<Headphones size={18}/>} text="EXPERT SUPPORT" />
-                <TrustPoint icon={<CreditCard size={18}/>} text="SECURE PAYMENT" />
+                <TrustPoint icon={<ShieldCheck size={18} />} text="2 YEAR WARRANTY" />
+                <TrustPoint icon={<Zap size={18} />} text="FAST DELIVERY" />
+                <TrustPoint icon={<Headphones size={18} />} text="EXPERT SUPPORT" />
+                <TrustPoint icon={<CreditCard size={18} />} text="SECURE PAYMENT" />
               </div>
             </div>
           </div>
@@ -122,27 +120,27 @@ const Hero = () => {
           {/* VISUAL SECTION */}
           <div className="w-full lg:w-[45%]">
             <div className="relative rounded-[3rem] overflow-hidden shadow-2xl aspect-square group">
-              <img 
-                src={slides[currentSlide].image} 
+              <img
+                src={slides[currentSlide].image}
                 className="w-full h-full object-cover transition-transform duration-[3000ms] group-hover:scale-105"
                 alt="Product"
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/20 to-transparent"></div>
-              
+
               {/* Overlay Nav */}
               <div className="absolute bottom-6 right-6 flex gap-2">
-                 <button 
+                <button
                   onClick={() => setCurrentSlide(prev => (prev === 0 ? slides.length - 1 : prev - 1))}
                   className="w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition-all shadow-lg"
-                 >
-                   <MoveRight className="rotate-180" size={20} />
-                 </button>
-                 <button 
+                >
+                  <MoveRight className="rotate-180" size={20} />
+                </button>
+                <button
                   onClick={() => setCurrentSlide(prev => (prev + 1) % slides.length)}
                   className="w-12 h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-brand-600 hover:text-white transition-all shadow-lg"
-                 >
-                   <MoveRight size={20} />
-                 </button>
+                >
+                  <MoveRight size={20} />
+                </button>
               </div>
             </div>
           </div>
