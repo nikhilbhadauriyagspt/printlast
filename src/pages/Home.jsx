@@ -6,6 +6,7 @@ import { useWishlist } from '../context/WishlistContext';
 import HeroBento from '../components/HeroBento';
 import SEO from '../components/SEO';
 import Skeleton from '../components/Skeleton';
+import { staticBlogs } from '../utils/staticBlogs';
 import {
     Heart, ShoppingBag, ArrowRight, MoveRight, 
     Zap, ShieldCheck, Truck, Headphones, Search,
@@ -15,7 +16,7 @@ import {
 const Home = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [blogs, setBlogs] = useState([]);
+    const [blogs, setBlogs] = useState(staticBlogs);
     const [activeTab, setActiveTab] = useState('New Arrivals');
     const [deal, setDeal] = useState(null);
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -55,14 +56,39 @@ const Home = () => {
     useEffect(() => {
         const fetchFastData = async () => {
             try {
-                const [catRes, dealRes, blogRes] = await Promise.all([
+                const [catRes, dealRes, prodRes] = await Promise.all([
                     api.get('/categories'),
                     api.get('/settings/deal'),
-                    api.get('/blogs')
+                    api.get('/products') // Fetch products here to pick a fallback deal
                 ]);
                 setCategories(catRes.data);
-                setDeal(dealRes.data);
-                setBlogs(blogRes.data);
+                
+                // Prioritize the targeted HP product, then any HP printer, then the database deal, then the latest product
+                if (prodRes.data && Array.isArray(prodRes.data) && prodRes.data.length > 0) {
+                    const targetProduct = prodRes.data.find(p => {
+                        const name = (p.name || '').toLowerCase();
+                        return name.includes('m255dw') || 
+                               (name.includes('hp') && name.includes('m255')) ||
+                               (name.includes('laserjet') && name.includes('color')) ||
+                               name.includes('hp laserjet pro m255dw') ||
+                               name.includes('hp'); // Any HP product
+                    });
+
+                    const finalTarget = targetProduct || prodRes.data.find(p => (p.name || '').toLowerCase().includes('printer')) || prodRes.data.find(p => (p.name || '').toLowerCase().includes('laser'));
+
+                    if (finalTarget) {
+                        setDeal(finalTarget);
+                    } else if (dealRes.data) {
+                        setDeal(dealRes.data);
+                    } else {
+                        const latestProducts = [...prodRes.data].reverse();
+                        const fallbackDeal = latestProducts.find(p => p.is_featured) || latestProducts[0];
+                        setDeal(fallbackDeal);
+                    }
+                } else if (dealRes.data) {
+                    setDeal(dealRes.data);
+                }
+
             } catch (error) {
                 console.error("Error fetching fast data:", error);
             } finally {
@@ -226,50 +252,50 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* --- SECTION 3: DEAL (Premium Modern Design) --- */}
+            {/* --- SECTION 3: DEAL (Premium Soft Design) --- */}
             {deal && (
-                <section className="py-32 relative overflow-hidden bg-[#0A0A0A]">
-                    {/* Animated Background Elements */}
-                    <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-600/20 blur-[150px] rounded-full translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
-                    <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-600/10 blur-[120px] rounded-full -translate-x-1/4 translate-y-1/4"></div>
+                <section className="py-24 relative overflow-hidden bg-slate-50">
+                    {/* Animated Background Elements - Softened */}
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-100/40 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
+                    <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-100/40 blur-[100px] rounded-full -translate-x-1/4 translate-y-1/4"></div>
                     
-                    {/* Subtle Grid Pattern Overlay */}
-                    <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', size: '40px 40px' }}></div>
+                    {/* Subtle Grid Pattern Overlay - Lighter */}
+                    <div className="absolute inset-0 opacity-[0.4]" style={{ backgroundImage: 'radial-gradient(#cbd5e1 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
 
                     <div className="container mx-auto px-6 relative z-10">
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                             
                             {/* Left: Content (Col 7) */}
                             <div className="lg:col-span-7 flex flex-col items-start text-left order-2 lg:order-1">
-                                <div className="inline-flex items-center gap-3 px-4 py-2 bg-brand-600/10 border border-brand-600/20 rounded-full mb-8">
-                                    <Zap size={14} className="text-brand-500 animate-bounce" />
-                                    <span className="text-brand-400 font-black tracking-[0.2em] text-[10px] uppercase">Exclusive Flash Sale</span>
+                                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full mb-6 shadow-sm">
+                                    <Zap size={12} className="text-brand-500 fill-brand-500 animate-pulse" />
+                                    <span className="text-brand-600 font-black tracking-[0.15em] text-[9px] uppercase">Exclusive Offer</span>
                                 </div>
 
-                                <h2 className="text-4xl md:text-6xl font-black text-white mb-8 leading-[0.9] tracking-tighter">
+                                <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 leading-[0.95] tracking-tight">
                                     {deal.name.split(' ').slice(0, -1).join(' ')} <br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-400 to-slate-700">
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-brand-400">
                                         {deal.name.split(' ').slice(-1)}
                                     </span>
                                 </h2>
 
-                                <div className="mb-12 relative group/desc">
-                                    <p className={`text-slate-400 text-lg md:text-xl font-medium leading-relaxed max-w-xl opacity-80 transition-all duration-700 ease-in-out ${isDescriptionExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-[100px] line-clamp-3 overflow-hidden'}`}>
+                                <div className="mb-10 relative group/desc">
+                                    <p className={`text-slate-500 text-sm md:text-base font-medium leading-relaxed max-w-lg transition-all duration-700 ease-in-out ${isDescriptionExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-[80px] line-clamp-3 overflow-hidden'}`}>
                                         {deal.description}
                                     </p>
                                     {deal.description.length > 120 && (
                                         <button 
                                             onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                                            className="inline-flex items-center gap-2 text-brand-500 text-xs font-black uppercase tracking-[0.2em] mt-6 hover:text-white transition-all group/btn"
+                                            className="inline-flex items-center gap-2 text-brand-600 text-[10px] font-black uppercase tracking-[0.2em] mt-4 hover:text-brand-800 transition-all group/btn"
                                         >
-                                            <span className="w-8 h-[1px] bg-brand-500 transition-all group-hover/btn:w-12"></span>
-                                            {isDescriptionExpanded ? 'Collapse' : 'Read Full Description'}
+                                            <span className="w-6 h-[1px] bg-brand-600 transition-all group-hover/btn:w-10"></span>
+                                            {isDescriptionExpanded ? 'Close' : 'Read More'}
                                         </button>
                                     )}
                                 </div>
                                 
-                                {/* Modern Countdown Timer */}
-                                <div className="flex gap-4 md:gap-8 mb-16">
+                                {/* Modern Countdown Timer - Light Theme */}
+                                <div className="flex gap-3 md:gap-5 mb-10">
                                     {[
                                         { label: 'Days', value: timeLeft.days },
                                         { label: 'Hours', value: timeLeft.hours },
@@ -277,123 +303,94 @@ const Home = () => {
                                         { label: 'Secs', value: timeLeft.seconds }
                                     ].map((item, i) => (
                                         <div key={i} className="relative group">
-                                            <div className="w-16 h-16 md:w-24 md:h-24 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] flex flex-col items-center justify-center transition-all duration-500 group-hover:bg-white/10 group-hover:border-brand-500/50">
-                                                <span className="text-2xl md:text-4xl font-black text-white leading-none mb-1">
+                                            <div className="w-12 h-12 md:w-16 md:h-16 bg-white border border-slate-100 rounded-[1rem] flex flex-col items-center justify-center shadow-sm transition-all duration-500 group-hover:shadow-md group-hover:border-brand-200">
+                                                <span className="text-lg md:text-2xl font-black text-slate-900 leading-none mb-0.5">
                                                     {item.value.toString().padStart(2, '0')}
                                                 </span>
-                                                <span className="text-[8px] md:text-[10px] text-slate-500 font-black uppercase tracking-widest">{item.label}</span>
+                                                <span className="text-[7px] md:text-[8px] text-slate-400 font-bold uppercase tracking-widest">{item.label}</span>
                                             </div>
                                             {/* Decorative dots between units */}
-                                            {i < 3 && <span className="absolute -right-2 md:-right-4 top-1/2 -translate-y-1/2 text-white/20 font-black text-xl">:</span>}
+                                            {i < 3 && <span className="absolute -right-2 md:-right-3 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">:</span>}
                                         </div>
                                     ))}
                                 </div>
 
-                                {/* Stock Progress & Pricing */}
-                                <div className="w-full max-w-md bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-[2.5rem] mb-12">
-                                    <div className="flex justify-between items-end mb-6">
+                                {/* Stock Progress & Pricing - Light Theme */}
+                                <div className="w-full max-w-sm bg-white border border-slate-100 p-6 rounded-[2rem] mb-8 shadow-sm">
+                                    <div className="flex justify-between items-end mb-4">
                                         <div className="flex flex-col">
-                                            <span className="text-slate-500 text-xs font-black uppercase tracking-widest mb-1">Final Price</span>
-                                            <div className="flex items-center gap-4">
-                                                <span className="text-5xl font-black text-white tracking-tighter">${deal.price}</span>
+                                            <span className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">Deal Price</span>
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-3xl font-black text-slate-900 tracking-tighter">${deal.price}</span>
                                                 {parseFloat(deal.mrp) > parseFloat(deal.price) && (
-                                                    <span className="text-slate-500 line-through text-lg font-bold">${deal.mrp}</span>
+                                                    <span className="text-slate-400 line-through text-sm font-bold">${deal.mrp}</span>
                                                 )}
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <span className="text-brand-500 text-xs font-black uppercase tracking-widest block mb-1">Available</span>
-                                            <span className="text-white font-black text-xl tracking-tight">42 / 100</span>
+                                            <span className="text-brand-600 text-[9px] font-black uppercase tracking-widest block mb-1">Stock Left</span>
+                                            <span className="text-slate-900 font-black text-base tracking-tight">42 / 100</span>
                                         </div>
                                     </div>
                                     
                                     {/* Urgency Progress Bar */}
-                                    <div className="h-3 w-full bg-white/10 rounded-full overflow-hidden">
-                                        <div className="h-full bg-gradient-to-r from-brand-600 to-brand-400 w-[42%] rounded-full relative">
-                                            <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite]"></div>
-                                        </div>
+                                    <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                                        <div className="h-full bg-brand-500 w-[42%] rounded-full relative"></div>
                                     </div>
-                                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-4 text-center">
-                                        Hurry! Once the stock is gone, the offer ends.
-                                    </p>
                                 </div>
 
-                                <div className="flex flex-wrap gap-6">
+                                <div className="flex flex-wrap gap-4">
                                     <button 
                                         onClick={() => addToCart(deal)}
-                                        className="group relative px-12 py-6 bg-white text-black font-black text-xs uppercase tracking-[0.2em] rounded-full overflow-hidden transition-all hover:pr-16"
+                                        className="group relative px-8 py-4 bg-black text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-full overflow-hidden transition-all hover:pr-12 shadow-lg shadow-black/10 hover:shadow-xl hover:bg-brand-600"
                                     >
-                                        <span className="relative z-10">Add to Cart Now</span>
-                                        <ArrowRight size={18} className="absolute right-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all" />
+                                        <span className="relative z-10">Add to Cart</span>
+                                        <ArrowRight size={16} className="absolute right-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all" />
                                     </button>
-                                    <Link to={`/product/${deal.slug}`} className="px-12 py-6 border-2 border-white/10 text-white font-black text-xs uppercase tracking-[0.2em] rounded-full hover:bg-white/5 transition-all">
-                                        View Details
+                                    <Link to={`/product/${deal.slug}`} className="px-8 py-4 border border-slate-200 text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] rounded-full hover:bg-slate-50 transition-all">
+                                        Details
                                     </Link>
                                 </div>
                             </div>
 
-                            {/* Right: Product Display (Enhanced Cinematic Look) */}
+                            {/* Right: Product Display (Clean & Minimal) */}
                             <div className="lg:col-span-5 relative order-1 lg:order-2">
-                                <div className="relative group perspective-1000">
+                                <div className="relative group">
                                     
-                                    {/* Advanced Background Glows */}
-                                    <div className="absolute inset-0 bg-brand-600/20 blur-[100px] rounded-full scale-75 group-hover:scale-110 transition-transform duration-1000"></div>
-                                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-brand-600/10 via-transparent to-blue-500/10 blur-[80px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+                                    {/* Soft Background Glow */}
+                                    <div className="absolute inset-0 bg-brand-100/50 blur-[60px] rounded-full scale-90 group-hover:scale-100 transition-transform duration-700"></div>
 
                                     {/* Main Display Card */}
-                                    <div className="relative aspect-[4/5] bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[4rem] p-8 md:p-12 flex items-center justify-center overflow-hidden transition-all duration-700 group-hover:shadow-[0_0_100px_rgba(0,0,0,0.5)] group-hover:border-white/20">
+                                    <div className="relative aspect-[4/5] bg-white border border-slate-100 rounded-[3rem] p-8 md:p-10 flex items-center justify-center overflow-hidden shadow-xl shadow-slate-200/50 transition-all duration-700 group-hover:shadow-2xl group-hover:border-slate-200">
                                         
-                                        {/* Futuristic Decorative Elements */}
-                                        <div className="absolute inset-0 pointer-events-none">
-                                            <div className="absolute top-0 left-0 w-full h-full border border-white/5 rounded-[4rem] scale-95 group-hover:scale-100 transition-transform duration-700"></div>
-                                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[2px] bg-white/5 rotate-45 group-hover:rotate-[225deg] transition-transform duration-[2000ms]"></div>
-                                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[2px] bg-white/5 -rotate-45 group-hover:-rotate-[135deg] transition-transform duration-[2000ms]"></div>
-                                        </div>
-
-                                        {/* Premium Floating Badge */}
-                                        <div className="absolute top-8 right-8 z-20">
-                                            <div className="w-20 h-20 md:w-24 md:h-24 glass-effect border-brand-500/30 rounded-full flex flex-col items-center justify-center text-white shadow-2xl animate-[float_4s_ease-in-out_infinite]">
-                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-400 mb-1">Save</span>
-                                                <div className="flex items-start">
-                                                    <span className="text-2xl md:text-3xl font-black tracking-tighter">{Math.round(((deal.mrp - deal.price) / deal.mrp) * 100)}</span>
-                                                    <span className="text-sm font-black mt-1">%</span>
+                                        {/* Minimal Badge */}
+                                        <div className="absolute top-6 right-6 z-20">
+                                            <div className="w-16 h-16 bg-black text-white rounded-full flex flex-col items-center justify-center shadow-lg animate-[float_4s_ease-in-out_infinite]">
+                                                <span className="text-[8px] font-black uppercase tracking-widest text-brand-300 mb-0.5">Save</span>
+                                                <div className="flex items-start leading-none">
+                                                    <span className="text-xl font-black tracking-tighter">{Math.round(((deal.mrp - deal.price) / deal.mrp) * 100)}</span>
+                                                    <span className="text-[10px] font-black mt-0.5">%</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {/* Product Image with dynamic shadow */}
+                                        {/* Product Image */}
                                         <Link to={`/product/${deal.slug}`} className="block w-full h-full relative z-10 flex items-center justify-center">
-                                            <div className="relative w-full h-full flex items-center justify-center animate-[float_6s_ease-in-out_infinite]">
+                                            <div className="relative w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105">
                                                 <img
                                                     src={deal.image_url?.startsWith('http') ? deal.image_url : `/products/${deal.image_url}`}
                                                     alt={deal.name}
-                                                    className="max-w-[85%] max-h-[85%] object-contain transition-all duration-1000 group-hover:scale-110 drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)]"
+                                                    className="max-w-[85%] max-h-[85%] object-contain drop-shadow-xl"
                                                     onError={(e) => e.target.src = 'https://via.placeholder.com/600'}
                                                 />
-                                                {/* Under-image localized glow */}
-                                                <div className="absolute bottom-0 w-1/2 h-1/4 bg-brand-600/40 blur-[60px] rounded-full opacity-50 group-hover:opacity-100 transition-opacity"></div>
                                             </div>
                                         </Link>
-
-                                        {/* Reflections & Gloss */}
-                                        <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/10 to-transparent pointer-events-none"></div>
-                                        <div className="absolute bottom-0 left-0 w-full h-1/4 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
                                     </div>
-
-                                    {/* Bottom Reflection Effect */}
-                                    <div className="absolute -bottom-16 inset-x-10 h-32 bg-gradient-to-t from-brand-600/5 to-transparent blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10"></div>
                                 </div>
                             </div>
 
                         </div>
                     </div>
-
-                    <style>{`
-                        @keyframes shimmer {
-                            0% { transform: translateX(-100%); }
-                            100% { transform: translateX(100%); }
-                        }
-                    `}</style>
                 </section>
             )}
 

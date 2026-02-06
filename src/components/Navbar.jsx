@@ -124,7 +124,7 @@ const Navbar = () => {
             </div>
 
             {/* Main Navbar */}
-            <header className={`fixed left-0 right-0 z-[60] transition-all duration-500 ${isScrolled ? 'top-4 mx-4 md:mx-12 py-3 glass-effect rounded-[2.5rem] shadow-2xl shadow-black/5' : 'top-0 lg:top-12 py-8 bg-transparent border-transparent'}`}>
+            <header className={`fixed left-0 right-0 z-[60] transition-all duration-500 ${isScrolled ? 'top-4 mx-4 md:mx-12 py-3 glass-effect rounded-[2.5rem] shadow-2xl shadow-black/5' : 'top-0 lg:top-[48px] py-6 bg-black/90 backdrop-blur-md border-b border-white/10'}`}>
                 <div className="container mx-auto px-6 md:px-12">
                     <div className="flex items-center justify-between">
 
@@ -133,7 +133,7 @@ const Navbar = () => {
                              {/* Mobile Hamburger */}
                             <button
                                 onClick={() => setIsMenuOpen(true)}
-                                className={`lg:hidden p-2 rounded-xl transition-colors ${isTransparent ? 'text-white bg-white/10' : 'text-black bg-slate-100'}`}
+                                className={`lg:hidden p-2 rounded-xl transition-colors ${!isScrolled ? 'text-white bg-white/10' : 'text-black bg-slate-100'}`}
                             >
                                 <Menu size={24} strokeWidth={2} />
                             </button>
@@ -142,12 +142,12 @@ const Navbar = () => {
                                 {branding ? (
                                     branding.logo_url ? (
                                         <img
-                                            src={(isTransparent && branding.logo_url === '/logo/logo.svg') ? '/logo/logo-white.svg' : branding.logo_url}
+                                            src={(!isScrolled || (isTransparent && branding.logo_url === '/logo/logo.svg')) ? '/logo/logo-white.svg' : branding.logo_url}
                                             alt={branding.name}
                                             className={`h-8 md:h-10 w-auto object-contain transition-all duration-500`}
                                         />
                                     ) : (
-                                        <span className={`font-black tracking-tighter text-3xl transition-colors duration-500 ${isTransparent ? 'text-white' : 'text-black'}`}>
+                                        <span className={`font-black tracking-tighter text-3xl transition-colors duration-500 ${!isScrolled ? 'text-white' : 'text-black'}`}>
                                             {branding.name}<span className="text-brand-600">.</span>
                                         </span>
                                     )
@@ -166,7 +166,7 @@ const Navbar = () => {
                                     className={`px-6 py-2.5 text-[11px] font-black uppercase tracking-[0.15em] transition-all duration-300 rounded-xl ${
                                         location.pathname === link.path 
                                         ? 'bg-black text-white shadow-lg' 
-                                        : `${isTransparent ? 'text-white hover:bg-white/20' : 'text-slate-600 hover:text-black hover:bg-slate-100'}`
+                                        : `${!isScrolled ? 'text-white hover:bg-white/20' : 'text-slate-600 hover:text-black hover:bg-slate-100'}`
                                     }`}
                                 >
                                     {link.name}
@@ -178,14 +178,14 @@ const Navbar = () => {
                         <div className="flex items-center gap-3 md:gap-5">
                             <button 
                                 onClick={() => setIsSearchOpen(true)}
-                                className={`p-2.5 rounded-xl transition-all duration-300 ${isTransparent ? 'text-white hover:bg-white/20' : 'text-slate-600 hover:text-black hover:bg-slate-100'}`}
+                                className={`p-2.5 rounded-xl transition-all duration-300 ${!isScrolled ? 'text-white hover:bg-white/20' : 'text-slate-600 hover:text-black hover:bg-slate-100'}`}
                             >
                                 <Search size={22} strokeWidth={2} />
                             </button>
 
                             <Link 
                                 to="/wishlist" 
-                                className={`hidden sm:flex p-2.5 rounded-xl transition-all duration-300 relative ${isTransparent ? 'text-white hover:bg-white/20' : 'text-slate-600 hover:text-black hover:bg-slate-100'}`}
+                                className={`hidden sm:flex p-2.5 rounded-xl transition-all duration-300 relative ${!isScrolled ? 'text-white hover:bg-white/20' : 'text-slate-600 hover:text-black hover:bg-slate-100'}`}
                             >
                                 <Heart size={22} strokeWidth={2} />
                                 {wishlistItems.length > 0 && (
@@ -195,10 +195,10 @@ const Navbar = () => {
 
                             <Link 
                                 to="/cart" 
-                                className={`flex items-center gap-2 p-2.5 px-4 rounded-xl transition-all duration-300 relative ${isTransparent ? 'bg-white text-black hover:bg-slate-100' : 'bg-black text-white hover:bg-brand-600 shadow-xl shadow-black/10'}`}
+                                className={`flex items-center gap-2 p-2.5 px-4 rounded-xl transition-all duration-300 relative ${!isScrolled ? 'bg-white text-black hover:bg-slate-100' : 'bg-black text-white hover:bg-brand-600 shadow-xl shadow-black/10'}`}
                             >
                                 <ShoppingCart size={20} strokeWidth={2} />
-                                <span className={`text-xs font-black ${isTransparent ? 'text-black' : 'text-white'}`}>
+                                <span className={`text-xs font-black ${!isScrolled ? 'text-black' : 'text-white'}`}>
                                     {cartCount}
                                 </span>
                             </Link>

@@ -1,26 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../api/api';
 import SEO from '../components/SEO';
+import { staticBlogs } from '../utils/staticBlogs';
 import { Calendar, User, ArrowRight } from 'lucide-react';
 
 const Blogs = () => {
-    const [blogs, setBlogs] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [blogs, setBlogs] = useState(staticBlogs);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const fetchBlogs = async () => {
-            try {
-                setLoading(true);
-                const res = await api.get('/blogs');
-                setBlogs(res.data);
-            } catch (error) {
-                console.error("Failed to fetch blogs", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchBlogs();
+        // We can still keep the useEffect for any other initialization if needed, 
+        // but fetching is removed since we use static data.
+        setLoading(false);
     }, []);
 
     return (

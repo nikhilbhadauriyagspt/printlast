@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../api/api';
 import SEO from '../components/SEO';
 import SchemaMarkup from '../components/SchemaMarkup';
+import { staticBlogs } from '../utils/staticBlogs';
 import { Calendar, User, Clock, ArrowLeft, Share2, Bookmark, ChevronRight } from 'lucide-react';
 
 const BlogDetails = () => {
@@ -12,21 +12,20 @@ const BlogDetails = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchBlogData = async () => {
+        const fetchBlogData = () => {
             try {
-                // Fetch current blog
-                const res = await api.get(`/blogs/${slug}`);
-                setBlog(res.data);
+                // Find current blog from static data
+                const currentBlog = staticBlogs.find(b => b.slug === slug);
+                setBlog(currentBlog);
 
-                // Fetch other blogs for "Read Next" (simulated by fetching all and filtering)
-                const allBlogsRes = await api.get('/blogs');
-                const others = allBlogsRes.data
+                // Get other blogs for "Read Next"
+                const others = staticBlogs
                     .filter(b => b.slug !== slug)
                     .slice(0, 2);
                 setRelatedBlogs(others);
 
             } catch (error) {
-                console.error("Failed to fetch article data");
+                console.error("Failed to load article data");
             } finally {
                 setLoading(false);
             }
