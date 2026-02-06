@@ -48,6 +48,9 @@ import AboutUs from './pages/AboutUs';
 import PolicyPage from './pages/PolicyPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import NotFound from './pages/NotFound';
+import ReturnPolicy from './pages/ReturnPolicy';
+import ShippingDeliveryPolicy from './pages/ShippingDeliveryPolicy';
+import TeamAndConditions from './pages/teamandconditions';
 import './App.css';
 
 function App() {
@@ -58,7 +61,7 @@ function App() {
       <Routes>
         {/* --- Admin Routes (Protected) --- */}
         <Route path="/admin/login" element={<AdminLogin />} />
-        
+
         <Route path="/admin" element={
           <AdminProtectedRoute>
             <AdminLayout>
@@ -66,7 +69,7 @@ function App() {
             </AdminLayout>
           </AdminProtectedRoute>
         } />
-        
+
         <Route path="/admin/orders" element={
           <AdminProtectedRoute>
             <AdminLayout>
@@ -198,7 +201,10 @@ function App() {
                 <Route path="/orders" element={<MyOrders />} />
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/settings" element={<UserProfile />} />
-                <Route path="/pages/privacy" element={<PrivacyPolicy />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/return-policy" element={<ReturnPolicy />} />
+                <Route path="/shipping-policy" element={<ShippingDeliveryPolicy />} />
+                <Route path="/terms" element={<TeamAndConditions />} />
                 <Route path="/pages/:type" element={<PolicyPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

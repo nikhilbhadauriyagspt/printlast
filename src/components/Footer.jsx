@@ -104,9 +104,10 @@ const Footer = () => {
                     <FooterColumn title="Support" links={[
                         { label: 'Track Your Order', to: '/track' },
                         { label: 'Help Center', to: '/faq' },
-                        { label: 'Privacy Policy', to: '/pages/privacy' },
-                        { label: 'Terms of Service', to: '/pages/terms' },
-                        { label: 'Shipping Info', to: '/pages/shipping' }
+                        { label: 'Privacy Policy', to: '/privacy-policy' },
+                        { label: 'Terms & Conditions', to: '/terms' },
+                        { label: 'Shipping Info', to: '/shipping-policy' },
+                        { label: 'Return Policy', to: '/return-policy' }
                     ]} />
 
                     <div>
