@@ -4,9 +4,9 @@ import api from '../api/api';
 import { Phone, Mail, HelpCircle, Truck, ChevronDown, MapPin, Sparkles } from 'lucide-react';
 
 const TopBar = () => {
-      const [branding, setBranding] = useState({
-          contact_email: 'support@printlast.com'
-      });
+  const [branding, setBranding] = useState({
+    contact_email: 'support@printlast.com'
+  });
   useEffect(() => {
     const websiteId = import.meta.env.VITE_WEBSITE_ID || 1;
     const fetchBranding = async () => {
@@ -24,7 +24,7 @@ const TopBar = () => {
     <div className="hidden lg:block bg-black text-white py-3 relative z-[70]">
       <div className="container mx-auto px-12">
         <div className="flex justify-between items-center h-6">
-          
+
           {/* Left: Ticker/Message */}
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
@@ -35,7 +35,7 @@ const TopBar = () => {
             </div>
             <div className="h-4 w-px bg-white/10"></div>
             <p className="text-[10px] font-bold tracking-widest uppercase text-slate-400">
-                Support: <span className="text-white">{branding.phone}</span>
+              Support: <span className="text-white">{branding.phone}</span>
             </p>
           </div>
 
@@ -47,10 +47,7 @@ const TopBar = () => {
             <Link to="/faq" className="flex items-center gap-2 hover:text-brand-400 transition-colors text-[10px] font-black tracking-[0.2em] uppercase">
               Help Center
             </Link>
-            <div className="flex items-center gap-3 bg-white/5 px-4 py-1.5 rounded-full border border-white/10">
-                <span className="text-[9px] font-black uppercase tracking-widest">USD</span>
-                <ChevronDown size={10} className="text-slate-500" />
-            </div>
+
           </div>
 
         </div>
