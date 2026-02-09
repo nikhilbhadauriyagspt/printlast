@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Navbar from './components/Navbar';
 import TopBar from './components/TopBar';
@@ -52,6 +52,51 @@ import ReturnPolicy from './pages/ReturnPolicy';
 import ShippingDeliveryPolicy from './pages/ShippingDeliveryPolicy';
 import TeamAndConditions from './pages/teamandconditions';
 import './App.css';
+
+const PublicLayout = () => {
+  const location = useLocation();
+  const isShopPage = location.pathname === '/products';
+
+  return (
+    <div className="min-h-screen bg-slate-50 flex flex-col pb-16 md:pb-0">
+      {!isShopPage && <TopBar />}
+      {!isShopPage && <Navbar />}
+      <div className="flex-grow">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/products" element={<Shop />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/product/:slug" element={<ProductDetails />} />
+          <Route path="/blog/:slug" element={<BlogDetails />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/track" element={<TrackOrder />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/orders" element={<MyOrders />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/settings" element={<UserProfile />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/return-policy" element={<ReturnPolicy />} />
+          <Route path="/shipping-policy" element={<ShippingDeliveryPolicy />} />
+          <Route path="/terms" element={<TeamAndConditions />} />
+          <Route path="/pages/:type" element={<PolicyPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
+      <Footer />
+      <MobileNav />
+      <CookieConsent />
+    </div>
+  );
+};
 
 function App() {
   return (
@@ -175,45 +220,7 @@ function App() {
         } />
 
         {/* --- Public Routes --- */}
-        <Route path="/*" element={
-          <div className="min-h-screen bg-slate-50 flex flex-col pb-16 md:pb-0">
-            <TopBar />
-            <Navbar />
-            <div className="flex-grow">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<AboutUs />} />
-                <Route path="/products" element={<Shop />} />
-                <Route path="/blogs" element={<Blogs />} />
-                <Route path="/product/:slug" element={<ProductDetails />} />
-                <Route path="/blog/:slug" element={<BlogDetails />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password/:token" element={<ResetPassword />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/order-success" element={<OrderSuccess />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/track" element={<TrackOrder />} />
-                <Route path="/wishlist" element={<Wishlist />} />
-                <Route path="/orders" element={<MyOrders />} />
-                <Route path="/profile" element={<UserProfile />} />
-                <Route path="/settings" element={<UserProfile />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/return-policy" element={<ReturnPolicy />} />
-                <Route path="/shipping-policy" element={<ShippingDeliveryPolicy />} />
-                <Route path="/terms" element={<TeamAndConditions />} />
-                <Route path="/pages/:type" element={<PolicyPage />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
-            <Footer />
-            <MobileNav />
-            <CookieConsent />
-          </div>
-        } />
+        <Route path="/*" element={<PublicLayout />} />
       </Routes>
     </Router>
   );
